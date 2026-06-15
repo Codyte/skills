@@ -1,0 +1,20 @@
+# caches / generated
+__pycache__/
+*.py[cod]
+.navindex-cache.json
+*.bak
+.DS_Store
+Thumbs.db
+
+# data stores / binaries (keep repo lean across machines)
+*.db
+*.sqlite
+*.sqlite3
+
+# deps / build output
+node_modules/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
