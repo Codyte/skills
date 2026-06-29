@@ -1,38 +1,12 @@
 ---
 name: codyte-spawn-optimized-agents
 version: "2.0.0-unified"
-description: |
-  **Universal Master Orchestrator** for goal-driven agent swarms with mandatory cost optimization.
-  Works for any project, but detects Codyte context (c:\Server_Dev) and auto-activates mandatory 
-  multi-tenant enforcement: tenant isolation, multi-unit entitlement, Memory V3, n8n integration, audit trails.
-  
-  **CORE FEATURES (ALWAYS ACTIVE):**
-  1. Cost-tracking MANDATORY via cost-optimize (real-time per-agent accounting)
-  2. Goal-hierarchy decomposition via /goal-plan (strategic intent → sub-goals)
-  3. Optimal model selection per sub-agent (Haiku < 1k, Sonnet 1-50k, Opus 50k+)
-  4. Memory token maximization (0.25x cost), output minimization (5x cost)
-  5. Context reuse via v3-memory-unification (150x-12.5kx faster search)
-  6. Real-time cost deltas + token accounting via monitor-stream
-  
-  **CODYTE-SPECIFIC FEATURES (Auto-Activated for c:\Server_Dev):**
-  1. Tenant-isolation enforcement (every query filters by tenant_id)
-  2. Multi-unit entitlement validation (automation_enabled + billing_status)
-  3. Per-tenant Memory V3 (HNSW indexing via factory pattern)
-  4. n8n webhook orchestration (Decision + Commitment contracts)
-  5. Audit trail completeness (metadata_json population)
-  6. Mandatory security review for public routes
-  
-  **Master Coordinator Mode:**
-  - You become the strategist; sub-agents execute work
-  - Sub-agents: planner, security, coder, reviewer, monitor
-  - For Codyte: All operations respect tenant isolation + multi-unit entitlement
-  - For other projects: Full feature set with optional tenant context
-  - Skill orchestrates delegation, tracks progress, optimizes cost in real-time
-  - Every agent action aligns with /goal via hierarchical decomposition
-  
-  Use when: Complex projects, cost-critical paths, multi-domain work, or whenever you want intelligent 
-  delegation + MANDATORY cost optimization. For Codyte (c:\Server_Dev): automatically enforces tenant 
-  isolation, n8n contracts, and CLAUDE.md compliance. Works across platforms (Claude Code, Codex, Gemini, Claude API).
+description: >
+  Master orchestrator for goal-driven agent swarms with mandatory cost optimization. Decomposes a
+  goal into sub-agents (planner/security/coder/reviewer/monitor), picks the cheapest viable model per
+  agent, and tracks cost in real time. Auto-activates Codyte mode in c:\Server_Dev (tenant isolation,
+  multi-unit entitlement, Memory V3, n8n contracts, audit trails, security review of public routes).
+  Use for complex multi-domain or cost-critical work needing delegation. Full detail in body below.
 color: purple
 metadata:
   version: "2.0.0"
