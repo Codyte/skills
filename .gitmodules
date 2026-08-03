@@ -1,0 +1,12 @@
+[submodule "navindex"]
+	path = navindex
+	url = https://github.com/Codyte/navindex.git
+[submodule "caveman"]
+	path = caveman
+	url = https://github.com/JuliusBrussee/caveman.git
+[submodule "handoff"]
+	path = handoff
+	url = https://github.com/Codyte/handoff.git
+[submodule "ponytail"]
+	path = ponytail
+	url = https://github.com/DietrichGebert/ponytail.git
