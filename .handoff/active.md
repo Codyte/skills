@@ -36,15 +36,6 @@ tracked as plain files instead of real submodules) and publish the parent repo p
   from before this session, e.g. `caveman-compress/*`, `theme-factory/*`) — not mine, scoped every
   commit to only the paths this session's work touched.
 
-## Standing decisions (carry forward verbatim)
-- `.claude/skills/navindex` (and caveman/handoff/ponytail) are junctions to
-  `.agents/skills/<name>` — editing the repo copy IS editing the installed skill; never attempt a
-  "sync to installed copy" step, it's a no-op (`cp` fails with "are the same file").
-- Nested skill repos (navindex/caveman/handoff/ponytail) are real git submodules now — commits
-  made with `cd <sub>` land in the SUBMODULE's own repo, not the parent. After committing inside
-  one, always `cd ..` and `git add <sub> && git commit` in the parent to advance its pointer, or
-  the parent silently drifts behind.
-
 ## Next steps (ordered)
 1. (optional) Resolve the ~74 unrelated pre-existing dirty/deleted paths in the parent repo (not
    from this session) — either commit, restore, or confirm intentional deletion. Not blocking.
