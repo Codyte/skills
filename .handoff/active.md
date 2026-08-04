@@ -1,56 +1,57 @@
-# Handoff · .agents/skills · 2026-08-03
+# Handoff · .agents/skills · 2026-08-04
 
 ## Goal
-Elevate the `navindex` skill to state-of-the-art, then fix repo hygiene it exposed (nested repos
-tracked as plain files instead of real submodules) and publish the parent repo publicly.
+Split the `handoff` skill's memory into two levels — persistent project constraints vs
+per-session state — so a constraint can no longer be lost by the copy-forward that carried it.
 
 ## State
-- HEAD: 283b7e3 (after submodule conversion commit, pushed)
-- Live state: parent repo now live at https://github.com/Codyte/skills (public, created this
-  session via `gh repo create`). `origin` remote already points there.
+- HEAD: 0a534f4 (parent) / 7373086 (handoff submodule) — all 4 submodule commits + their parent
+  bumps pushed, `main...origin/main` clean.
+- Live state: this repo now runs on the new format — `.handoff/standing.md` exists (2 entries,
+  migrated) and `active.md` no longer carries the inline section. Boot injects both.
 - Done:
-  - navindex.py: class-member symbol extraction (`.name` via member-indent rule, py+JS/TS), TS
-    `interface`/`type`/`enum`/`class`, PS1 `class`, EOL preservation on rewrite (LF stays LF on
-    Windows), `--install-hook` (pre-commit auto-refresh via `--auto`, worktree-aware via
-    `git rev-parse --git-path hooks`), `scripts/test_navindex.py` (6 asserts, passing).
-  - Docs (SKILL.md/README.md/references/internals.md) + evals/evals.json (3→7 cases) updated.
-  - Rolled out navindex headers+maps+hook to `C:\Server` (master) and `C:\Server_Dev` (worktree,
-    branch_geral) — both committed and pushed on their own remotes.
-  - Converted navindex/caveman/handoff/ponytail from "nested .git present but parent tracks file
-    contents as plain blobs" to real git submodules: `.gitmodules` + gitlink entries pinned to
-    each repo's pushed HEAD. Verified with a local `--recurse-submodules` clone.
-  - Created `https://github.com/Codyte/skills` (public) and pushed — this repo's old origin
-    (same URL) had been 404ing; recreating it fixed that.
-- In progress: nothing mid-flight. Session ended on user Q&A about submodule workflow (VS Code /
-  GitHub Desktop / git CLI) — informational only, no further code change pending from it.
+  - `standing.md` (level 0): `standing_file()`, `migrate_standing()`, `standing_status()`,
+    `STANDING_CAP=30`. Injected at boot ahead of the handoff and independently of it.
+  - `--archive` lifts a legacy `## Standing decisions` section out on first run, then nudges to
+    prune past the cap — at handoff time, never at boot (a boot warning would cost tokens/turn).
+  - `legacy_note()`: one line at boot telling an agent resuming an old-format handoff what to do;
+    two branches (no standing.md yet / stale duplicate). Self-extinguishing.
+  - `--grep` now searches `standing.md` first, labelled LIVE — it is never archived, so a live
+    constraint was the one thing the decision-finder could not find.
+  - `boot_breakdown()` accounts standing.md in the boot floor.
+  - Docs: SKILL.md (**Two levels** + **Resuming a handoff written in the old format**), README.md.
+    Selftest extended (lift idempotency, archive can't eat level 0, grep reaches it, legacy_note
+    both branches) — `--selftest` passes.
+- In progress: nothing mid-flight.
 
 ## Decisions (and why)
-- Pre-commit hook over PostToolUse-on-Edit — one hook, zero per-edit churn, doesn't pollute
-  in-progress diffs. Chosen over always-live refresh.
-- Regex-based extraction kept (no tree-sitter) — zero-dep is the point of this skill; only 1
-  nesting level (class members) added, deeper nesting (closures) intentionally skipped.
-- Converted the 4 nested repos to *real* submodules rather than deleting their inner `.git` dirs
-  (the cheaper option originally offered) — user picked "formalize as submodule" so each skill
-  keeps its own remote/history, clone works with `--recurse-submodules`.
-- Did **not** touch ~74 unrelated pre-existing dirty/staged paths in the parent repo (deletions
-  from before this session, e.g. `caveman-compress/*`, `theme-factory/*`) — not mine, scoped every
-  commit to only the paths this session's work touched.
+- Two files, not one — the gain is the failure mode, not tokens: input cost is identical (same
+  bytes injected), output saves only ~300-600 tok/handoff. What changes is that a file nobody
+  rewrites cannot be silently reworded or dropped.
+- Level 0 is **not** immutable and **not** "injected only once" — a SessionStart hook writes into
+  the context, which is re-sent every turn. So it needs a cap (30 lines) and a retire rule, or it
+  eats the very saving the skill exists to produce.
+- Rejected `--init` / `--install`: `--ensure-hook` already is the install; an `--init` would create
+  an empty scaffold that gets injected every turn and invites narrative. Create the file when a
+  verdict actually binds.
+- Boundary with `~/.claude/.../memory/`: memory = who the user is, cross-project. standing.md =
+  constraints on this repo, versioned with it. A fact fitting both goes to memory.
+- Corrected a claim the split invalidated ("the archive keeps retired entries") — post-migration a
+  retired entry is in git (`git log -p .handoff/standing.md`); only pre-split inline sections are
+  in `archive/`. Mattered because that guarantee is what makes pruning safe.
 
 ## Next steps (ordered)
-1. (optional) Resolve the ~74 unrelated pre-existing dirty/deleted paths in the parent repo (not
-   from this session) — either commit, restore, or confirm intentional deletion. Not blocking.
-2. (optional) Roll out navindex to any other active repos beyond `C:\Server` / `C:\Server_Dev`.
-3. (optional) Watch for a real codebase hitting the known ceiling — multi-line JS/TS method
-   signatures aren't extracted (`ponytail:` comment in navindex.py names this) — only upgrade to
-   tree-sitter if that actually bites.
+1. (optional) Nothing pending on the skill. When another repo with an old-format handoff runs
+   `/handoff`, the migration is automatic — no action needed here.
+2. (optional) Resolve the ~74 unrelated pre-existing dirty/deleted paths in the parent repo (not
+   from this session or the last) — commit, restore, or confirm intentional deletion.
+3. (optional) Roll navindex out to repos beyond `C:\Server` / `C:\Server_Dev`.
 
 ## Key files
-- [navindex/scripts/navindex.py](navindex/scripts/navindex.py) — core extractor/builder, see its
-  own NAV INDEX header for the symbol map
-- [navindex/scripts/test_navindex.py](navindex/scripts/test_navindex.py) — self-check, run before
-  any further navindex.py edit
-- [.gitmodules](.gitmodules) — the 4 submodule registrations added this session
-- `__navi__.md` (repo root) — folder map, regenerate after any structural change here
+- [handoff/load_handoff.py](handoff/load_handoff.py) — level-0 functions at L108-L173; see its
+  NAV INDEX header for the map
+- [handoff/SKILL.md](handoff/SKILL.md) — "Two levels" + old-format resume guidance
+- `.handoff/standing.md` — this repo's own level 0 (edit in place, never rewrite)
 
 ## Open / blockers
 None.
@@ -59,5 +60,6 @@ None.
 - navindex
 
 ## Effort
-low for step 1 (if picked up) — mechanical git triage (commit/restore/confirm), no design
-decision. Everything else is optional follow-up, not a blocker.
+low para o passo 1 — não há trabalho pendente na skill; os passos 2 e 3 são triagem git mecânica
+e rollout documentado. Suba para medium se mexer em `load_handoff.py` de novo: rode
+`--selftest` antes e depois, é o que segura o parser de seções e a migração.
