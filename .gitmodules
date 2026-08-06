@@ -10,3 +10,6 @@
 [submodule "ponytail"]
 	path = ponytail
 	url = https://github.com/DietrichGebert/ponytail.git
+[submodule "tia"]
+	path = tia
+	url = https://github.com/Codyte/TIA-Portal.git
