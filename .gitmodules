@@ -13,3 +13,6 @@
 [submodule "tia"]
 	path = tia
 	url = https://github.com/Codyte/Tia-Portal-CLI.git
+[submodule "onecall"]
+	path = onecall
+	url = https://github.com/Codyte/onecall.git
