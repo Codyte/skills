@@ -17,5 +17,5 @@
 	path = onecall
 	url = https://github.com/Codyte/onecall.git
 [submodule "KicadCLI"]
-	path = KicadCLI
+	path = kicad
 	url = https://github.com/Codyte/kicad-cli.git
